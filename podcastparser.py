@@ -235,28 +235,6 @@ class AtomContent(Target):
             handler.set_episode_attr('description', squash_whitespace(text))
 
 
-class RSSItemDescription(Target):
-    """
-    RSS 2.0 almost encourages to put html content in item/description
-    but content:encoded is the better source of html content and itunes:summary
-    is known to contain the short textual description of the item.
-    So use a heuristic to attribute text to either description or description_html,
-    without overriding existing values.
-    """
-    WANT_TEXT = True
-
-    def __init__(self):
-        self._want_content = False
-
-    def end(self, handler, text):
-        if is_html(text):
-            if not handler.get_episode_attr('description_html'):
-                handler.set_episode_attr('description_html', text.strip())
-        elif not handler.get_episode_attr('description'):
-            # don't overwrite itunes:summary?
-            handler.set_episode_attr('description', squash_whitespace(text))
-
-
 class PodloveChapters(Target):
     SUPPORTED_VERSIONS = ('1.1', '1.2')
 
@@ -620,11 +598,11 @@ MAPPING = {
     'rss/channel/item/guid': EpisodeGuid('guid'),
     'rss/channel/item/title': EpisodeAttr('title', squash_whitespace),
     'rss/channel/item/link': EpisodeAttrRelativeLink('link'),
-    'rss/channel/item/description': RSSItemDescription(),
-    'rss/channel/item/itunes:summary': EpisodeAttr('description', squash_whitespace),
-    'rss/channel/item/media:description': EpisodeAttr('description', squash_whitespace),
+    'rss/channel/item/description': EpisodeAttr('description', squash_whitespace),
+    'rss/channel/item/itunes:summary': EpisodeAttr('itunes_summary', squash_whitespace),
+    'rss/channel/item/media:description': EpisodeAttr('media_description', squash_whitespace),
     'rss/channel/item/itunes:subtitle': EpisodeAttr('subtitle', squash_whitespace),
-    'rss/channel/item/content:encoded': EpisodeAttr('description_html'),
+    'rss/channel/item/content:encoded': EpisodeAttr('content_encoded'),
     'rss/channel/item/itunes:duration': EpisodeAttr('total_time', parse_time),
     'rss/channel/item/pubDate': EpisodeAttr('published', parse_pubdate),
     'rss/channel/item/atom:link': AtomLink(),
