@@ -578,7 +578,7 @@ def parse_pubdate(text):
         except(OverflowError,ValueError):
             logger.warning('bad pubdate %s is before epoch or after end of time (2038)',parsed)
             return 0
-        
+
     try:
         parsed = time.strptime(text[:19], '%Y-%m-%dT%H:%M:%S')
         if parsed is not None:
@@ -613,6 +613,8 @@ MAPPING = {
     'rss/channel/image/url': PodcastAttrRelativeLink('cover_url'),
     'rss/channel/itunes:image': PodcastAttrFromHref('cover_url'),
     'rss/channel/atom:link': PodcastAtomLink(),
+    'rss/channel/itunes:owner/itunes:email': PodcastAttr('itunes_email', squash_whitespace),
+    'rss/channel/managingeditor': PodcastAttr('managing_editor', squash_whitespace),
 
     'rss/channel/item': EpisodeItem(),
     'rss/channel/item/guid': EpisodeGuid('guid'),
@@ -658,7 +660,7 @@ VALID_ROOTS = set(path.split('/')[0] for path in MAPPING.keys())
 class FeedParseError(sax.SAXParseException, ValueError):
     """
     Exception raised when asked to parse an invalid feed
-    
+
     This exception allows users of this library to catch exceptions
     without having to import the XML parsing library themselves.
     """
