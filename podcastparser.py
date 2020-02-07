@@ -63,9 +63,6 @@ except ImportError:
     # Python 3
     from email.utils import mktime_tz, parsedate_tz
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 class Target(object):
     WANT_TEXT = False
@@ -241,14 +238,15 @@ class PodloveChapters(Target):
     def start(self, handler, attrs):
         version = attrs.get('version', '1.1')
         if version not in PodloveChapters.SUPPORTED_VERSIONS:
-            logger.warning('Possible incompatible chapters version: %s', version)
+            # logger.warning('Possible incompatible chapters version: %s', version)
+            pass
 
 
 class PodloveChapter(Target):
     def start(self, handler, attrs):
         # Both the start and title attributes are mandatory
         if attrs.get('start') is None or attrs.get('title') is None:
-            logger.warning('Invalid chapter (missing start and/or and title)')
+            # logger.warning('Invalid chapter (missing start and/or and title)')
             return
 
         chapter = {
@@ -361,8 +359,8 @@ class Namespace():
             namespace_uri = self.lookup(namespace)
             if namespace_uri is None:
                 # Use of "itunes:duration" without xmlns:itunes="..."
-                logger.warning('No namespace defined for "%s:%s"', namespace,
-                            name)
+                # logger.warning('No namespace defined for "%s:%s"', namespace,
+                #             name)
                 return '%s:%s' % (namespace, name)
 
         if namespace_uri is not None:
@@ -466,7 +464,7 @@ def parse_time(value):
         try:
             seconds = int(value)
         except ValueError:
-            logger.warning('Could not parse time value: "%s"', value)
+            # logger.warning('Could not parse time value: "%s"', value)
             return 0
 
     return (int(hours) * 60 + int(minutes)) * 60 + int(seconds)
@@ -554,7 +552,7 @@ def parse_pubdate(text):
             pubtimeseconds = int(mktime_tz(parsed))
             return pubtimeseconds
         except(OverflowError,ValueError):
-            logger.warning('bad pubdate %s is before epoch or after end of time (2038)',parsed)
+            # logger.warning('bad pubdate %s is before epoch or after end of time (2038)',parsed)
             return 0
 
     try:
@@ -576,7 +574,7 @@ def parse_pubdate(text):
     except Exception:
         pass
 
-    logger.error('Cannot parse date: %s', repr(text))
+    # logger.error('Cannot parse date: %s', repr(text))
     return 0
 
 
